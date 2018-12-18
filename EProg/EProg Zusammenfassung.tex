@@ -21,6 +21,10 @@
 %\usepackage[table]{xcolor}
 %\setlength{\parindent}{0cm}
 
+%TODO : Eclipse debugging
+%     : Ableitungsbaum Beispiel verschönern
+%     : 
+
 \begin{document}
 \tableofcontents
 
@@ -33,6 +37,7 @@
 \textbf{EBNF Beschreibung} & Eine Menge von EBNF Regeln. Reihenfolge unwichtig.\\
 \textbf{LHS/RHS} & Left-hand side, right-hand side\\
 \textbf{Control Forms} & Eine der folgenden Begriffe:\\
+& Aufreihung, Auswahl, Option, Wiederholung\\
 \quad \quad \textbf{Aufreihung} & \textit{room} $\Leftarrow$ D28\\
 & \textit{room} $\Leftarrow$ \textit{floor} \textit{number}\\
 \quad \quad \textbf{Auswahl} & \textit{bit} $\Leftarrow 0 \mid 1$\\
@@ -68,29 +73,9 @@ $[+\mid-]$ \textit{digit} \{\textit{digit}\} & Definition \textit{integer}\\
 \subsubsection{Formeller Beweis: Ableitungsbaum}
 Graphische Darstellung einer Tabelle. Jeder Zwischenschritt wird als 'Level' des Baums dargestellt. Die Kanten zeigen welche Regeln uns erlauben, von einem Level zum nächstem zu gelangen.
 \subsubsection{Beispiel: Ableitungsbaum} %TODO this looks horrible
-\begin{tikzpicture}[nodes={draw, circle}, ->]
-
-	\node{\textit{integer}}
-		child { node {$[+\mid-]$} 
-			child { node {[+]}
-				child { node {+}}
-			}
-		}
-		child { node {\textit{digit}} 
-			child { node {1}
-				child { node {1}}
-			}
-		}
-		child { node {\{\textit{digit}\}}
-			child { node {\textit{digit}}
-				child { node {2}}
-			}
-			child { node {\textit{digit}}
-				child { node {8} }
-			}
-		};
-
-\end{tikzpicture}
+\begin{figure}[h!]
+\includegraphics[width=200px]{ableitungsbaum-bsp.png}
+\end{figure}
 \subsection{Rekursion}
 \textit{sequence} $\Leftarrow$ B $\mid$ A\textit{sequence} ergibt "B", "AB", "AAB", $\hdots$\\\\
 \textbf{Jede Wiederholung ist eine Rekursion} / kann als Rekursion ausgedrückt werden.\\
