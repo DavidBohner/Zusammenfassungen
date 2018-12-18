@@ -94,6 +94,17 @@ Um diese Zeichen in einer Beschreibung zu benutzen, umrahmt man sie.\\
 Man kann auch das Zeichen mit "" umschreiben. In diesem Fall ist auch " ein Sonderzeichen.\\ %TODO
 \hspace*{1cm} "\{", "$\mid$", $\hdots$
 \newpage
+\section{Boolsche Auswertung}
+Java wertet zuerst der linke aus, und via "Kurzschluss" schliesst die Entscheidung so bald wie möglich ab.\\
+\hspace*{1cm} Z.B. für "\&\&" sobald ein Teil (term) falsch ist.\\
+\hspace*{1cm} Für "$\|$" sobald ein Teil (term) wahr ist.\\\\
+Implikationen:\\
+\begin{tabularx}{\linewidth}{l X}
+if((a/b $>$ 0) \&\& (b != 0)) \{\} & Möglicher ArithmeticException weil $a/b$ zuerst ausgewertet wird.\\
+if((b != 0) \&\& ($a/b > 0$)) \{\} & Falls b=0, wird der rechte Teil nie ausgewertet, also kann der Rest des codes problemlos weiter ausgeführt werden.\\
+if((a $<$ b $\|$ a++ $<$ 5)) \{\} & Falls a$<$b, wird a++ nicht durchgeführt, und dadurch wird im rest des codes a eins weniger sein als erwartet.
+\end{tabularx}
+\newpage
 \section{Packages}
 package packageName;\\
 import packageName.*;\\\\
@@ -144,6 +155,61 @@ Gültig genau dann, wenn es eine \textbf{Invariante I} gibt, so dass:\\\\
 $P \implies I$ & Invariante gilt zu beginn.\\
 $\{I \land B\} S \{I\}$ & Nach ausführen des Rumpfes gilt die Invariante wieder.\\
 $\{I \land \neg B\} \implies Q$ & Invariante (und Verlassen der Schleife, d.h. test B ist false) impliziert postcondition $Q$.
+\end{tabularx}
+\section{Extras}
+\subsection{Terneary}
+Form:\\
+\begin{verbatim}
+i = input > MAX ? MAX : input;
+\end{verbatim}
+ergibt (i=max) falls input$>$MAX, sonst (i=input).
+\subsection{String Operands}
+\begin{tabularx}{\linewidth}{l X}
+.toUpperCase / .toLowerCase\\
+.indexOf("a") & int Position im String\\
+.subString(a, b) & String mit Buchstaben von (int) a zu b (inkl.)\\
+.equals(String)\\
+.equalsIgnoreCase(String)\\
+.startsWith(String) / .endsWith(String)
+\end{tabularx}
+\subsection{Input/Output}
+\subsubsection{Konsole}
+Scanner scanner = new Scanner(System.in);
+\subsubsection{Dateien}
+File file = new File(path);\\
+Scanner readFile = new Scanner(file);\\
+Scanner oneLiner = new Scanner(new File(path));\\
+PrintStream output = new PrintStream(file);\\
+\hspace*{1cm} Falls file nicht existiert, wird sie erstellt; Sonst, \textbf{überschrieben}.
+\newpage
+\subsection{Window-Klasse}
+Window window = new Window("Fenstertitel", breite, höhe);\\
+window.command();\\\\
+\subsubsection*{Basics}
+\begin{tabularx}{\linewidth}{l X}
+open() & Öffnet das Fenster / Sichtbar\\
+close() & Schliesst es / Unsichtbar\\
+waitUntilClosed() & Pausiert den Code, bis das Fenster nicht mehr offen ist.\\
+isOpen() & boolean\\
+fill\_\_\_(x, y, dimensions) & Zeichnet die gegebene Figur.\\
+fillRect(x, y, breite, höhe) & x, y linker Ecken oben.\\
+fillCircle(x, y, radius) & x, y mitte.\\
+draw\_\_\_() & Zeichnet den umriss der gebenenen Figur.\\
+drawString(String, x, y) & x, y linker Ecken unten. Ja, unten.\\
+drawImage(path, x, y) & x, y linker Ecken oben. Optional drawImageCentered()\\\\
+setColor(r, g, b) & \{r, g, b\} ints $\in$ \{0, ..., 255\}\\
+setStrokeWidth(int width)\\
+setFontSize(int size)\\\\
+refresh()\\
+refresh(int waitTime) & Wird nur ausgeführt, wenn der letzte refresh länger als waitTime ms her ist.\\
+refreshAndClear() & optionaler (int waitTime)\\\\
+\end{tabularx}
+\subsubsection*{GUI Input}
+\begin{tabularx}{\linewidth}{l X}
+isKeyPressed("left") & boolean\\
+isLeftMouseButtonPressed() & boolean\\
+wasKeyTyped() & Nur einen Frame lang true, auch wenn die Taste weiterhin gedrückt wird.\\
+getMouseX() / getMouseY() & int
 \end{tabularx}
 \newpage
 \section{Eclipse}
