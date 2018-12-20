@@ -60,11 +60,11 @@ Jede Zeile wird aus der Vörgängerzeile durch eine der folgenden Regeln abgelei
 4. & Bestimmung der Zahl der Wiederholungen
 \end{tabularx}\\\\
 Manchmal werden 1. und 2. gleichzeitig ausgeführt.
-\subsubsection*{Beispiel: Tabelle}
+\subsubsection{Beispiel: Tabelle}
 +128 ist ein integer\\\\
 \begin{tabularx}{\linewidth}{l X}
 \textit{integer} & \\
-$[+\mid-]$ \textit{digit} \{\textit{digit}\} & Definition \textit{integer}\\
+$[+\mid-]$ \textit{digit} \{\textit{digit}\} & LHS durch RHS, \textit{integer} wurde ersetzt.\\
 + \textit{digit} \{\textit{digit}\} & Auswahl "+"\\
 + 1 \{\textit{digit}\} & LHS durch RHS, \textit{digit} wurde ersetzt.\\
 + 1 \textit{digit} \textit{digit} & Zweifache Wiederholung ausgewählt.\\
@@ -135,6 +135,30 @@ Klasse mit Namen D in Package a.b.c sollte in a/b/c/D.class gespeichert sein (re
 \end{tabularx}
 \section{Hoare Tripel}
 \subsection{Basics} %TODO translate this
+\subsubsection{Allgemeine Form}
+$\{P\} S \{Q\}$\\
+\subsubsection{Terminologie}
+\begin{tabularx}{\linewidth}{r X}
+\textbf{Precondition} & Die Annahme/Aussage, die vor der Ausführung eines Statements (bez. Programmsegments) gilt.\\
+\textbf{Postcondition} & Die Aussage, die nach der Ausführung gilt, unter der Annahme dass die Aussage davor gültig ist.
+\end{tabularx}
+\subsubsection{Forwärts Schliessen}
+Von dem Zustand \textbf{vor} der Ausführung eines Programm(segment)s, nimmt man die \textbf{precondition P} an.\\\\
+Forwärts Schliessen:
+\begin{itemize}
+\item Bestimmt was sich aus den ursprünglichen Annahmen herleiten lässt.
+\item Ist sehr praktisch wenn eine \textbf{Invariante} gelten soll. (Siehe 5.3) %TODO how to link dynamically? Should be while-loops.
+\item Simuliert die Ausführung des Programms für viele "Inputs" "gleichzeitig".
+\end{itemize}
+\subsubsection{Rückwärts Schliessen}
+Man wählt einen beliebigen Zustand \textbf{nach} der Ausführung eines Programm(segment)s. Dies ist die \textbf{Postcondition Q}.\\\\
+Rückwärts Schliessen:
+\begin{itemize}
+\item Bestimmt hinreichende Bedingungen die ein Ergebnis garantieren.
+\item Wenn das Ergebnis erwünscht ist, dann folgt aus den Bedingungen die Korrektheit.
+\item Ist das Ergebnis unerwünscht, dann reichen die Bedingungen um einen Bug zu generieren.
+\item Ist oft von grossem praktischem Nutzen. Man muss verstehen, was jede Anweisung zum Erreichen eines bestimmten Zustandes beiträgt.
+\end{itemize}
 \subsection{If-Statements}
 \subsubsection{Allgemeine Form}
 $\{P\}$ if $\{b\}$ $S1$ else $S2$ $\{Q\}$
