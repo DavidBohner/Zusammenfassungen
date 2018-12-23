@@ -136,7 +136,7 @@ Klasse mit Namen D in Package a.b.c sollte in a/b/c/D.class gespeichert sein (re
 \section{Hoare Tripel}
 \subsection{Basics} %TODO translate this
 \subsubsection{Allgemeine Form}
-$\{P\} S \{Q\}$\\
+$\{P\} S \{Q\}$
 \subsubsection{Terminologie}
 \begin{tabularx}{\linewidth}{r X}
 \textbf{Precondition} & Die Annahme/Aussage, die vor der Ausführung eines Statements (bez. Programmsegments) gilt.\\
@@ -150,6 +150,7 @@ Forwärts Schliessen:
 \item Ist sehr praktisch wenn eine \textbf{Invariante} gelten soll. (Siehe 5.3) %TODO how to link dynamically? Should be while-loops.
 \item Simuliert die Ausführung des Programms für viele "Inputs" "gleichzeitig".
 \end{itemize}
+\newpage
 \subsubsection{Rückwärts Schliessen}
 Man wählt einen beliebigen Zustand \textbf{nach} der Ausführung eines Programm(segment)s. Dies ist die \textbf{Postcondition Q}.\\\\
 Rückwärts Schliessen:
@@ -161,18 +162,28 @@ Rückwärts Schliessen:
 \end{itemize}
 \subsection{If-Statements}
 \subsubsection{Allgemeine Form}
-$\{P\}$ if $\{b\}$ $S1$ else $S2$ $\{Q\}$
+\begin{tabularx}{\linewidth}{r X}
+\textbf{Form} & $\{P\}$ if $\{b\}$ $S1$ else $S2$ $\{Q\}$\\
+\textbf{Precondition} & Das Ergebnis des Tests $b$.\\
+\textbf{Postcondition} & Die Disjunktion ("oder") der Postconditions des then- und else-Blockes.
+\end{tabularx}
 \subsubsection{Gültigkeit}
-Gültig genau dann, wenn es $\{Q1, Q2\}$ gibt, so dass folgendes gilt:\\\\
+Gültig genau dann, wenn es $\{Q_1, Q_2\}$ gibt, so dass folgendes gilt:\\\\
 \begin{tabular}{ll}
-$\{P \land b\}$ $S1$ $\{Q1\}$\\
-$\{P \land \neg b \}$ $S2$ $\{Q2\}$\\
-$Q1 \lor Q2 \implies Q$
+$\{P \land b\}$ $S1$ $\{Q_1\}$\\
+$\{P \land \neg b \}$ $S2$ $\{Q_2\}$\\
+$Q_1 \lor Q_2 \implies Q$
 \end{tabular}
+\subsubsection{Übliche Notation}
 
 \subsection{While-Loops}
 \subsubsection{Allgemeine Form}
-$\{P\} \text{while}(B) S; {Q}$
+\begin{tabularx}{\linewidth}{r X}
+\textbf{Form} & $\{P\}$ while $(b)$ $S$; $\{Q\}$\\ %TODO B or b?
+\textbf{Precondition} & \\
+\textbf{Postcondition} & \\
+\textbf{Invariante} & 
+\end{tabularx}
 \subsubsection{Gültigkeit}
 Gültig genau dann, wenn es eine \textbf{Invariante I} gibt, so dass:\\\\
 \begin{tabularx}{\linewidth}{lX}
@@ -204,7 +215,7 @@ File file = new File(path);\\
 Scanner readFile = new Scanner(file);\\
 Scanner oneLiner = new Scanner(new File(path));\\
 PrintStream output = new PrintStream(file);\\
-\hspace*{1cm} Falls file nicht existiert, wird sie erstellt; Sonst, \textbf{überschrieben}.
+\hspace*{1cm} Falls datei \textit{file} nicht existiert, wird sie erstellt; Sonst, \textbf{überschrieben}.
 \newpage
 \subsection{Window-Klasse}
 Window window = new Window("Fenstertitel", breite, höhe);\\
