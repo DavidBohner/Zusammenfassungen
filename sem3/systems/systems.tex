@@ -1,0 +1,128 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+%\usepackage{tikz}
+%\usepackage{graphicx}
+%\usetikzlibrary{positioning}
+\usepackage{tabularx}
+
+\usepackage{hyperref}
+\usepackage{color}
+\hypersetup{
+	colorlinks,
+	filecolor=black,
+	linkcolor=black,
+	urlcolor=black
+}
+\usepackage{listings}
+%\usepackage[table]{xcolor}
+%\setlength{\parindent}{0cm}
+
+%TODO : 
+
+\author{David Bohner}
+\title{Systems Programming and Computer Architecture \\ Summary}
+\date{HS 2019}
+
+\begin{document}
+\maketitle
+\tableofcontents
+\newpage
+\section{Definitions}
+
+\section{5 'Realities'}
+\begin{itemize}
+	\item \textbf{int}s and \textbf{float}s are \textbf{not} numbers.
+		\begin{itemize}
+			\item $x^2 \geq 0?$
+			\begin{itemize}
+				\item Floats?: Yes!
+				\item Ints?: Overflows!
+			\end{itemize}
+			\item $(x+y)+z = x+(y+z)?$
+			\begin{itemize}
+				\item Ints?: Yes!
+				\item Floats?: Not always!
+			\end{itemize}
+		\end{itemize}
+	\item You have to know assembly
+		\begin{itemize}
+			\item To understand:
+			\begin{itemize}
+				\item \textbf{bugs}
+				\item program \textbf{performance}
+				\item implement \textbf{system software}
+				\item create/fight \textbf{malware}
+			\end{itemize}
+		\end{itemize}
+	\item Memory matters. (RAM is not a realistic abstraction).
+		\begin{itemize}
+			\item Memory:
+			\begin{itemize}
+				\item is \textbf{not unbounded}
+				\item \textbf{performance} is \textbf{not uniform}
+				\item is \textbf{typed} (= different behaviours)
+			\end{itemize}
+		\end{itemize}
+	\item There's much more to performance than asymptotic complexity.
+		\begin{itemize}
+			\item Memory fetch times (access patterns) much more important nowadays
+		\end{itemize}
+	\item Computers don't just execute programs / calculate values.
+		\begin{itemize}
+			\item e.g. I/O
+		\end{itemize}
+\end{itemize}
+
+\section{Crash-Course to C}
+\subsection{Control Flow}
+\begin{itemize}
+	\item Functions
+		\begin{itemize}
+			\item return (..)
+		\end{itemize}
+	\item Loops
+		\begin{itemize}
+			\item for (..; ..; ..)
+			\item do .. while (..)
+			\item while (..) ..
+		\end{itemize}
+	\item Conditionals
+		\begin{itemize}
+			\item if (..) then .. else ..
+			\item switch (..) case .. : ..; default ..
+		\end{itemize}
+	\item Jumps
+		\begin{itemize}
+			\item break, continue
+			\item goto ..
+		\end{itemize}
+	\item I/O
+		\begin{itemize}
+			\item printf()
+		\end{itemize}
+\end{itemize}
+
+\subsection{Operators}
+\begin{itemize}
+	\item Operators and \textbf{precedence}
+	\item Assignment operators
+	\item Post/pre inc/decrement
+	\item Casting
+\end{itemize}
+
+\subsection{Arrays/Strings}
+\begin{itemize}
+	\item Arrays of basic types
+	\item Multidimensional arrays
+	\item Initializers
+	\item Strings
+	\begin{itemize}
+		\item Arrays of ASCII characters
+		\item Null-terminated (str[5] = \texttt{\{'n', 'u', 'l', 'l', '\textbackslash 0'\}})
+	\end{itemize}
+	\item String library
+\end{itemize}
+\end{document}

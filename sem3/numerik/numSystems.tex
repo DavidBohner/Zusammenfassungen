@@ -1,0 +1,73 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+%\usepackage{tikz}
+%\usepackage{graphicx}
+%\usetikzlibrary{positioning}
+\usepackage{tabularx}
+
+\usepackage{hyperref}
+\usepackage{color}
+\hypersetup{
+	colorlinks,
+	filecolor=black,
+	linkcolor=black,
+	urlcolor=black
+}
+\usepackage{listings}
+%\usepackage[table]{xcolor}
+%\setlength{\parindent}{0cm}
+
+%TODO : 
+
+\author{David Bohner}
+\title{Numerical Methods for CSE \\ Summary}
+\date{HS 2019}
+
+\begin{document}
+\maketitle
+\tableofcontents
+\newpage
+\section{Definitions}
+\begin{tabularx}{\linewidth}{r X}
+Matrix \textbf{entry} & $(A)_{i,j}$\\
+Matrix \textbf{block} & $(A)_{k:l,r:s}: 1 \leq k \leq l \leq n, 1 \leq r \leq s \leq m$\\
+\textbf{Tensor} product & Vector $\times$ Vector ($xy^H$)
+\end{tabularx}
+
+\section{Software and Libraries}
+\subsection{Eigen}
+A C++ LinAlg library. Fundamental data type: Matrices.\\
+
+\begin{tabularx}{\linewidth}{r X}
+\textbf{Fixed} matrices: & n, m known at compile time.\\ & Optimized well by compiler.\\
+\textbf{Variable} matrices: & n, m unknown at compile.\\ & Memory usage unoptimized.
+\end{tabularx}
+
+\subsection{Matrix Storage Formats}
+$A := \begin{bmatrix} 1 & 2 \\ 3 & 4 \end{bmatrix}$ \\
+\begin{tabularx}{\linewidth}{r X}
+\textbf{Row} Major & A\_arr = \{1, 2, 3, 4\}\\
+& (\textbf{C-arrays}, Bitmaps, Python, ...)\\
+\textbf{Column} Major & A\_arr = \{1, 3, 2, 4\}\\
+& (\textbf{Eigen}, Fortran, Matlab, ...)
+\end{tabularx}\\\\\\
+Data layout can be important for \textbf{performance};\\
+\textbf{Computational effort} (asymptotic complexity) $\neq$ \textbf{Runtime}.\\
+Asymptotic complexity allows us to predict the \textbf{increase in runtime} depending on increase in data size.
+\subsubsection{Example:}
+\begin{itemize}
+\item[Q:] What is the optimal storage format for a Matrix $\times$ Vector calculation?
+\item[A:] Row major storage. (Consider the optimal order of computation.)
+\end{itemize}
+\subsubsection{Cost of Basic Matrix-Vector Ops}
+\begin{tabularx}{\linewidth}{c c c c c}
+operation & description & \#mul/div & \#add/sub & asym. complex.\\
+dot product & $(x \in \mathbb{R}^n, y \in \mathbb{R}^n) \mapsto x^Hy$ & $n$ & $n-1$ & $O(n)$\\
+tensor product & $(x \in \mathbb{R}^m, y \in \mathbb{R}^n) \mapsto xy^H$ & $mn$ & $0$ & $O(mn)$\\
+matrix product* & $(A \in \mathbb{R}^{m,n}, B \in \mathbb{R}^{n,k}) \mapsto AB$ & $mnk$ & $mk(n-1)$ & $O(mnk)$
+\end{tabularx}
+*triple-loop implementation
+\end{document}
