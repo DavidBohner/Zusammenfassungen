@@ -1,0 +1,58 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+%\usepackage{tikz}
+%\usepackage{graphicx}
+%\usetikzlibrary{positioning}
+\usepackage{tabularx}
+
+\usepackage{hyperref}
+\usepackage{color}
+\hypersetup{
+	colorlinks,
+	filecolor=black,
+	linkcolor=black,
+	urlcolor=black
+}
+\usepackage{listings}
+%\usepackage[table]{xcolor}
+%\setlength{\parindent}{0cm}
+
+%TODO : 
+
+\author{David Bohner}
+\title{Analysis II \\ Summary}
+\date{HS 2019}
+
+\begin{document}
+\maketitle
+\tableofcontents
+\newpage
+\section{Definitions}
+\begin{tabularx}{\linewidth}{r X}
+Differential Equation & The unknown/s is/are a \textbf{function} $\mathbf{f}$, and relates values of $f$ at a point $x$ with values of derivatives of $f$ at $x$.\\
+Ordinary DE & A differential equation where the function $f$ has one variable only.\\
+\textbf{Order} (of a DE) & The \textbf{highest} derivative that appears in a diff. equation\\
+\textbf{Linear} DE & See below.\\
+\textbf{Homogenous} LDE & See below.
+\end{tabularx}
+
+\subsection{Examples of Differential Equations}
+\begin{tabular}{|c|c|c|} \hline
+$f' = f$ & $f'(x+1) = f(x)$ & $f'(x)^2 = f(x)^3 - f(x)$\\
+One sol: $f(x) = \alpha e^x$ & \textbf{Not ordinary} & Or: $e^x f'(x)^2 = x f(x)^3 - f(x) + 1$\\ \hline
+$f'=a$ & All laws of physics\\
+a being a \textbf{fixed} function of x & Well, at least \textit{almost all}\\ \hline
+\end{tabular}
+
+\subsection{Ordinary Differential Equations}
+Differential equations are \textbf{not} ordinary if they relate the value of $f$ at a point $x$ with the derivative of \textbf{another point}, like $f'(x+1) - f(x) = 0$.
+
+\subsection{Linear Differential Equations}
+Equations of the form: $y^{(k)} + a_{k-1}y^{(k-1)} + ... + a_1y' + a_0y = b$ where the coefficients $a_i$ are complex-valued \textit{functions} on $I$ (an interval), and the unknown is a complex-valued function from $I$ to $C$ that is k-times differentiable on $I$, are \textit{linear differential equations}.\\
+In the case of $b = 0$, the equation is an \textit{homogeneous linear ordinary differential equation}.
+In the case of $b$ being a function $b: I \to C$, it is an \textit{inhomogeneous linear ordinary differential equation}, with \textit{associated homogeneous equation} the one with $b = 0$.
+
+\end{document}
