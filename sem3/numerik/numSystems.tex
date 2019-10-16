@@ -162,11 +162,42 @@ If a Matrix has $\forall x \in \mathbb{K}^n: x^HMx \geq 0$, it is \textit{\textb
 EIGEN is a \textit{header-only} C++ template library. It provides data structures and operations on them for matrices and vectors, as well as some more fundamental algorithms.\\% It has an incomplete and/or outdated documentation.
 Reference the relevant document for a more comprehensive overview of EIGEN.
 \subsubsection{Dense Matrix Storage Formats}
+$A := \begin{bmatrix}1 & 2 \\ 3 & 4 \end{bmatrix}$\\
+\begin{large}Row Major\end{large} 
+\begin{tabular}{|c|c|c|c|c|}
+\hline $A_{arr}$ & 1 & 2 & 3 & 4\\
+\hline
+\end{tabular}\\
+\-\ \hspace*{0.2cm} Used by: \textbf{C-arrays}, Bitmaps, Python, ...\\
+$A_{ij} \leftrightarrow A_{arr} (m*(i-1)+(j-1))$\\\\
+\begin{large}Column Major\end{large} 
+\begin{tabular}{|c|c|c|c|c|}
+\hline $A_{arr}$ & 1 & 3 & 2 & 4\\
+\hline
+\end{tabular}\\
+\-\ \hspace*{0.2cm} Used by: \textbf{EIGEN}, Fortran, Matlab, ...\\
+$A_{ij} \leftrightarrow A_{arr} (n*(j-1) + (i-1))$
 \subsection{Basic Linear Algebra Operations}
 \subsubsection{Elementary Matrix-Vector Calculus}
+Multiplication with triangular matrices:\\
+$A,B \begin{cases}\text{diagonal} \\ \text{upper triangular} \\ \text{lower triangular} \end{cases} \implies AB \text{ and } A^{-1} \begin{cases}\text{diagonal} \\ \text{upper triangular} \\ \text{lower triangular} \end{cases}$\\
+\textit{($A^{-1}$ assuming $A$ is regular)}\\\\
+Block Matrix Product:\\
+We divide matrices $A$, $B$ into 4 sub-matrices each.\\
+$\begin{bmatrix}A_{11} & A_{12} \\ A_{21} & A_{22} \end{bmatrix} * \begin{bmatrix}B_{11} & B_{12} \\ B_{21} & B_{22}\end{bmatrix} = \begin{bmatrix}A_{11}B_{11} + A_{12}B_{21} & A_{11}B_{12} + A_{12}B_{22} \\ A_{21}B_{11} + A_{22}B_{21} & A_{21}B_{12} + A_{22}B_{22}\end{bmatrix}$
 \subsection{Computational Effort}
+\textbf{Computational effort $\nsim$ runtime.}\\
+Computational effort brings a valuable insight into the rate at which runtime grows at in comparison to the input size.
 \subsubsection{Asymptotic Complexity}
+
 \subsubsection{Cost of Basic Linear-Algebra Operations}
+\begin{tabularx}{\linewidth}{c | c c c c}
+operation & description & \#mul/div & \#add/sub & asym. complex.\\ \hline
+dot product & $(x \in \mathbb{R}^n, y \in \mathbb{R}^n) \mapsto x^Hy$ & $n$ & $n-1$ & $O(n)$\\
+tensor product & $(x \in \mathbb{R}^m, y \in \mathbb{R}^n) \mapsto xy^H$ & $mn$ & $0$ & $O(mn)$\\
+matrix product* & $(A \in \mathbb{R}^{m,n}, B \in \mathbb{R}^{n,k}) \mapsto AB$ & $mnk$ & $mk(n-1)$ & $O(mnk)$
+\end{tabularx}
+*triple-loop implementation
 \subsubsection{Reducing Complexity in Numerical Linear Algebra}
 \subsection{Machine Arithmetic and Consequences}
 \subsubsection{Loss of Orthogonality}

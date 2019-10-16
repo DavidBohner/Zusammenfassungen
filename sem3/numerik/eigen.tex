@@ -23,7 +23,6 @@
 \usepackage{tocloft}
 \usepackage{lettrine}
 \usepackage{GoudyIn}
-\usepackage{tabularx}
 
 % commands we are defining / redefining
 \renewcommand{\LettrineFontHook}{\GoudyInfamily{}}
@@ -103,7 +102,6 @@ identifierstyle=\color{variable},
 \newcommand{\lHeadVar}{\authorVar}
 % end variables you can adjust
 
-
 % last configuration before document starts
 \author{\authorVar}
 \title{\titleVar}
@@ -124,19 +122,56 @@ identifierstyle=\color{variable},
 % end optional math environments
     
 \begin{document}
-    
-    
+
+
 \maketitle
+
+\begin{lstlisting}[language=c++]
+#include <Eigen/Dense>
+\end{lstlisting}
 
 % if you dont want a table of contents delete the next line
 \tocr
 
 % this enables headers and footers on the first page
 \thispagestyle{fancy}
+
 \section{EIGEN matrix data types}
 \begin{itemize}
 \item \textbf{MatrixXd}: Generic, variable-sized matrix with \textbf{d}ouble precision entries.
 \item \textbf{VectorXi}, \textbf{RowVectorXf}: Generic variable-sized column and row vectors, with \textbf{i}nt / \textbf{f}loat precision entries.
 \item \textbf{MatrixNcd}, \textbf{VectorNd} with $N$ = 2, 3, ...: A fixed-size $N$x$N$ matrix/vector. Matrices/Vectors whose dimensions are known at compile-time are generally better optimized in terms of memory/storage requirements. \textbf{cd} stands for complex double.
 \end{itemize}
+\begin{lstlisting}[language=c++]
+Eigen::MatrixXd A = Eigen::MatrixXd::Constant(n, m, 0);
+\end{lstlisting}
+\section{Special Matrices}
+\begin{lstlisting}[language=c++]
+Eigen::MatrixXd I = Eigen::MatrixXd::Identity(n,n);
+Eigen::MatrixXd O = Eigen::MatrixXd::Zero(n,m);
+Eigen::MatrixXd D = d_vector.asDiagonal();
+\end{lstlisting}
+\section{Reading Matrix Values}
+\begin{lstlisting}[language=c++]
+using namespace Eigen;
+
+MatrixXd R = MatrixXd::Random(m,n); //Values between -1 and 1
+int a = R.rows(); //a = m.
+int b = R.cols(); //b = n.
+R(i,j) = 2;
+R.block(i,j,h,w); //Block size hxw starting at (i,j)
+\end{lstlisting}
+Other methods include: \texttt{topLeftCorner(p,q), bottomLeftCorner(p,q), topRightCorner(p,q), bottomRightCorner(p,q), topRows(q), bottomRows(q), leftCols(p), rightCols(p)}.
+\section{Basic Operations}
+\subsection{Arithmetic}
+\begin{lstlisting}[language=c++]
+A + B; A - B; A*B; n*A;
+A*x; x.adjoint()*A*x;
+\end{lstlisting}
+\subsection{Products}
+\begin{lstlisting}[language=c++]
+x.dot(y); //Dot product. x, y are column vectors.
+x.adjoint()*y; //Dot product by explicitly transposing x.
+x * y.adjoint(); //Tensor product.
+\end{lstlisting}
 \end{document}
