@@ -1,73 +1,198 @@
-\documentclass[12pt,a4paper]{article}
+\documentclass[12pt]{article}
+
+% all the packages we will import
+\usepackage[dvipsnames,usenames, table]{xcolor} 
 \usepackage[utf8]{inputenc}
-\usepackage{amsmath}
-\usepackage{amsfonts}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage[a4paper, margin=1in]{geometry}
+\usepackage{lipsum}
+\usepackage{libertine}
+\usepackage{amsthm}
 \usepackage{amssymb}
-%\usepackage{tikz}
-%\usepackage{graphicx}
-%\usetikzlibrary{positioning}
+\usepackage{amsmath}
+\usepackage{libertinust1math}
+\usepackage{tikz}
+\usepackage{mathtools}
+\usepackage{fancyhdr}
+\usepackage{tikz}
+\usepackage{graphicx}
+\usepackage{microtype}
+\usepackage{listings}
+\usepackage[hidelinks]{hyperref}
+\usepackage{tocloft}
+\usepackage{lettrine}
+\usepackage{GoudyIn}
 \usepackage{tabularx}
 
-\usepackage{hyperref}
-\usepackage{color}
-\hypersetup{
-	colorlinks,
-	filecolor=black,
-	linkcolor=black,
-	urlcolor=black
-}
-\usepackage{listings}
-%\usepackage[table]{xcolor}
-%\setlength{\parindent}{0cm}
+% commands we are defining / redefining
+\renewcommand{\LettrineFontHook}{\GoudyInfamily{}}
 
-%TODO : 
-
-\author{David Bohner}
-\title{Numerical Methods for CSE \\ Summary}
-\date{HS 2019}
-
-\begin{document}
-\maketitle
+\newcommand{\tocr}{
+\renewcommand\cftaftertoctitle{\par\noindent\hrulefill\par\vskip-0.65em}
 \tableofcontents
-\newpage
-\section{Definitions}
-\begin{tabularx}{\linewidth}{r X}
-Matrix \textbf{entry} & $(A)_{i,j}$\\
-Matrix \textbf{block} & $(A)_{k:l,r:s}: 1 \leq k \leq l \leq n, 1 \leq r \leq s \leq m$\\
-\textbf{Tensor} product & Vector $\times$ Vector ($xy^H$)
-\end{tabularx}
+\noindent\hrulefill
+}
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+\renewcommand{\ttdefault}{pcr}
 
-\section{Software and Libraries}
-\subsection{Eigen}
-A C++ LinAlg library. Fundamental data type: Matrices.\\
+    
+        
+\usepackage{inconsolata}
 
-\begin{tabularx}{\linewidth}{r X}
-\textbf{Fixed} matrices: & n, m known at compile time.\\ & Optimized well by compiler.\\
-\textbf{Variable} matrices: & n, m unknown at compile.\\ & Memory usage unoptimized.
-\end{tabularx}
+\definecolor{background}{HTML}{fcfeff}
+\definecolor{comment}{HTML}{b2979b}
+\definecolor{keywords}{HTML}{255957}
+\definecolor{basicStyle}{HTML}{6C7680}
+\definecolor{variable}{HTML}{001080}
+\definecolor{string}{HTML}{c18100}
+\definecolor{numbers}{HTML}{3f334d}
+\ifx
+\lstset{
+	% How/what to match
+	sensitive=true,
+	% Border (above and below)
+	frame=single,
+	% Extra margin on line (align with paragraph)
+	xleftmargin=\parindent,
+	% Put extra space under caption
+	belowcaptionskip=1\baselineskip,
 
-\subsection{Matrix Storage Formats}
-$A := \begin{bmatrix} 1 & 2 \\ 3 & 4 \end{bmatrix}$ \\
-\begin{tabularx}{\linewidth}{r X}
-\textbf{Row} Major & A\_arr = \{1, 2, 3, 4\}\\
-& (\textbf{C-arrays}, Bitmaps, Python, ...)\\
-\textbf{Column} Major & A\_arr = \{1, 3, 2, 4\}\\
-& (\textbf{Eigen}, Fortran, Matlab, ...)
-\end{tabularx}\\\\\\
-Data layout can be important for \textbf{performance};\\
-\textbf{Computational effort} (asymptotic complexity) $\neq$ \textbf{Runtime}.\\
-Asymptotic complexity allows us to predict the \textbf{increase in runtime} depending on increase in data size.
-\subsubsection{Example:}
+	% Break long lines into multiple lines?
+	breaklines=true,
+	% Show a character for spaces?
+	showstringspaces=false,
+	tabsize=2
+}
+\fi
+%END LISTINGDEF
+\lstdefinestyle{lectureNotesListing}{
+    numbers=left,
+    xleftmargin=0.8em, % 2.8 with line numbers
+    breaklines=true,
+    frame=single,
+    framesep=0.6mm,
+    frameround=ffff,
+    framexleftmargin=0.4em, % 2.4 with line numbers | 0.4 without them
+    tabsize=4, %width of tabs
+    aboveskip=1.0em,
+    classoffset=0,
+    sensitive=true,
+	% Colors
+backgroundcolor=\color{background},
+basicstyle=\color{basicStyle}\small\ttfamily,
+keywordstyle=\color{keywords},
+commentstyle=\color{comment},
+stringstyle=\color{string},
+numberstyle=\color{numbers},
+identifierstyle=\color{variable},
+    showstringspaces=true
+}
+\lstset{style=lectureNotesListing}
+%END LISTINGDEF
+
+
+
+% variables you can adjust
+\newcommand{\titleVar}{Numerical Methods for CSE\\Summary}
+\newcommand{\authorVar}{David Bohner}
+%\newcommand{\dateVar}{\today}
+\newcommand{\dateVar}{HS 2019}
+%\newcommand{\rHeadVar}{\titleVar}
+\newcommand{\rHeadVar}{NumCSE Summary}
+\newcommand{\lHeadVar}{\authorVar}
+% end variables you can adjust
+
+
+% last configuration before document starts
+\author{\authorVar}
+\title{\titleVar}
+\date{\dateVar}
+
+
+%making nice headers & footers
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{\rHeadVar}
+\lhead{\lHeadVar}
+\rfoot{Page \thepage}
+% ending last configuration
+
+
+% optional math environments
+\newtheorem{defn}{Definition}[section]
+% end optional math environments
+    
+\begin{document}
+    
+    
+\maketitle
+
+% if you dont want a table of contents delete the next line
+\tocr
+
+% this enables headers and footers on the first page
+\thispagestyle{fancy}
+\section*{Pre-amble} %TODO
+This document does not contain knowledge from, and expects an understanding of, any content in a Linear Algebra lecture.
+\section{Computing with Matrices and Vectors}
+\subsection{Fundamentals}
+\subsubsection{Notations}
+The default format of \textit{\textbf{vectors}} in this lecture is a \textit{\textbf{column vector}}.\\
+The \textit{\textbf{Kronecker symbol}} $\delta_{ij} := 1$ if $i=j$, 0 otherwise.\\
+An \textit{\textbf{Adjoined Matrix}} is \textit{\textbf{Hermetian-Transposed}}.
+\subsubsection{Classes of Matrices}
+Special Matrices:
 \begin{itemize}
-\item[Q:] What is the optimal storage format for a Matrix $\times$ Vector calculation?
-\item[A:] Row major storage. (Consider the optimal order of computation.)
+\item Identity Matrix
+\item Zero Matrix
+\item Diagonal Matrix
+\item Upper [Lower] Triangular Matrix
 \end{itemize}
-\subsubsection{Cost of Basic Matrix-Vector Ops}
-\begin{tabularx}{\linewidth}{c c c c c}
-operation & description & \#mul/div & \#add/sub & asym. complex.\\
-dot product & $(x \in \mathbb{R}^n, y \in \mathbb{R}^n) \mapsto x^Hy$ & $n$ & $n-1$ & $O(n)$\\
-tensor product & $(x \in \mathbb{R}^m, y \in \mathbb{R}^n) \mapsto xy^H$ & $mn$ & $0$ & $O(mn)$\\
-matrix product* & $(A \in \mathbb{R}^{m,n}, B \in \mathbb{R}^{n,k}) \mapsto AB$ & $mnk$ & $mk(n-1)$ & $O(mnk)$
-\end{tabularx}
-*triple-loop implementation
+\textit{\textbf{Symmetric (Hermetian) Positive Definite}} (spd) Matrices:
+\begin{itemize}
+\item $M = M^H$
+\item $\forall x \in \mathbb{K}^n: x^HMx > 0 \iff x \neq 0$
+\item $\forall 1 \leq i \leq n : m_{ii} > 0$
+\item $\forall 1 \leq i < j \leq n: m_{ii}m_{jj} - |m_{ij}|^2 > 0$
+\end{itemize}
+If a Matrix has $\forall x \in \mathbb{K}^n: x^HMx \geq 0$, it is \textit{\textbf{positive semi-definite}}.
+\subsection{Software and Libraries}
+\subsubsection{EIGEN}
+EIGEN is a \textit{header-only} C++ template library. It provides data structures and operations on them for matrices and vectors, as well as some more fundamental algorithms.\\% It has an incomplete and/or outdated documentation.
+EIGEN matrix data types:
+\begin{itemize}
+\item \textbf{MatrixXd}: Generic, variable-sized matrix with \textbf{d}ouble precision entries.
+\item \textbf{VectorXi}, \textbf{RowVectorXf}: Generic variable-sized column and row vectors, with \textbf{i}nt / \textbf{f}loat precision entries.
+\item \textbf{MatrixNcd}, \textbf{VectorNd} with $N$ = 2, 3, ...: A fixed-size $N$x$N$ matrix/vector. Matrices/Vectors whose dimensions are known at compile-time are generally better optimized in terms of memory/storage requirements. \textbf{cd} stands for complex double.
+\end{itemize}
+
+\subsubsection{Dense Matrix Storage Formats}
+\subsection{Basic Linear Algebra Operations}
+\subsubsection{Elementary Matrix-Vector Calculus}
+\subsection{Computational Effort}
+\subsubsection{Asymptotic Complexity}
+\subsubsection{Cost of Basic Linear-Algebra Operations}
+\subsubsection{Reducing Complexity in Numerical Linear Algebra}
+\subsection{Machine Arithmetic and Consequences}
+\subsubsection{Loss of Orthogonality}
+\subsubsection{Roundoff Errors}
+\subsubsection{Cancellation}
+
+\section{Direct Methods for Square LSE}
+\subsection{Elimination Solvers for LSE}
+\subsection{Exploiting Structure when Solving LSE}
+\subsection{Sparse Linear Systems}
+\subsubsection{Sparse Matrix Storage Formats}
+\subsubsection{Sparse Matrices in EIGEN}
+\subsubsection{Direct Solution of Sparce LSE}
+
+\section{Direct Methods for Linear Least Squares Problems}
+\subsection{Least Squares Solution Concepts}
+\subsubsection{Least Squares Solutions}
+\subsubsection{Normal Equations}
+\subsubsection{Moore-Penrose Pseudoinverse}
+\subsection{Normal Equation Methods}
 \end{document}
+    
+    
