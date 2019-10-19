@@ -134,7 +134,7 @@ identifierstyle=\color{variable},
 % this enables headers and footers on the first page
 \thispagestyle{fancy}
 \section*{Pre-amble} %TODO
-This document does not contain knowledge from, and expects an understanding of, any content in a Linear Algebra lecture.
+This document expects an understanding of content found in a Linear Algebra lecture.
 \section{Computing with Matrices and Vectors}
 \subsection{Fundamentals}
 \subsubsection{Notations}
@@ -161,6 +161,7 @@ If a Matrix has $\forall x \in \mathbb{K}^n: x^HMx \geq 0$, it is \textit{\textb
 \subsubsection{EIGEN}
 EIGEN is a \textit{header-only} C++ template library. It provides data structures and operations on them for matrices and vectors, as well as some more fundamental algorithms.\\% It has an incomplete and/or outdated documentation.
 Reference the relevant document for a more comprehensive overview of EIGEN.
+\subsubsection{}
 \subsubsection{Dense Matrix Storage Formats}
 $A := \begin{bmatrix}1 & 2 \\ 3 & 4 \end{bmatrix}$\\
 \begin{large}Row Major\end{large} 
@@ -185,39 +186,177 @@ $A,B \begin{cases}\text{diagonal} \\ \text{upper triangular} \\ \text{lower tria
 Block Matrix Product:\\
 We divide matrices $A$, $B$ into 4 sub-matrices each.\\
 $\begin{bmatrix}A_{11} & A_{12} \\ A_{21} & A_{22} \end{bmatrix} * \begin{bmatrix}B_{11} & B_{12} \\ B_{21} & B_{22}\end{bmatrix} = \begin{bmatrix}A_{11}B_{11} + A_{12}B_{21} & A_{11}B_{12} + A_{12}B_{22} \\ A_{21}B_{11} + A_{22}B_{21} & A_{21}B_{12} + A_{22}B_{22}\end{bmatrix}$
+\subsubsection{}
 \subsection{Computational Effort}
 \textbf{Computational effort $\nsim$ runtime.}\\
 Computational effort brings a valuable insight into the rate at which runtime grows at in comparison to the input size.
 \subsubsection{Asymptotic Complexity}
-
+Sharpness of a complexity bound:\\
+\-\ \hspace*{0.2cm} $O(n)$ means that it is not in $O(n^\alpha)$ for any $\alpha < 1$.\\
+\-\ \hspace*{0.2cm} $O(\exp(n))$ excludes $O(n^p)$ for any $p \in \mathbb{R}$.
 \subsubsection{Cost of Basic Linear-Algebra Operations}
 \begin{tabularx}{\linewidth}{c | c c c c}
 operation & description & \#mul/div & \#add/sub & asym. complex.\\ \hline
 dot product & $(x \in \mathbb{R}^n, y \in \mathbb{R}^n) \mapsto x^Hy$ & $n$ & $n-1$ & $O(n)$\\
 tensor product & $(x \in \mathbb{R}^m, y \in \mathbb{R}^n) \mapsto xy^H$ & $mn$ & $0$ & $O(mn)$\\
+matrix $\times$ vector & $(x \in \mathbb{R}^n, A \in \mathbb{R}^{m,n}) \mapsto Ax$ & $mn$ & $(n-1)m$ & $O(mn)$\\
 matrix product* & $(A \in \mathbb{R}^{m,n}, B \in \mathbb{R}^{n,k}) \mapsto AB$ & $mnk$ & $mk(n-1)$ & $O(mnk)$
 \end{tabularx}
 *triple-loop implementation
 \subsubsection{Reducing Complexity in Numerical Linear Algebra}
+Remember that set of problems about efficient matrix multiplication order in AnD? Yeah. More of that.\\
+\textbf{Rank-1 Matrix $\times$ Vector}
+Instead of calculating $Ax$, we de-compose $A$ into the column and row vectors $a, b$ (since $A$ has rank 1).\\
+$(ab)x = a(bx)$, but the latter is more efficient to compute ($bx$ boils down to a constant).\\
+\textbf{Reusing intermediate results}
+Instead of re-computing the same results on each loop, do it once, then use the same object within the loop for multiple repetitions.\\\\
+Ex. Reusing: (Gaussian solving via lu-dec, e.g. for $j$ vectors b stored in a matrix B)
+\begin{lstlisting}[language=c++]
+#include <Eigen/Dense>
+using namespace Eigen;
+
+//O(Nn^3)
+void wasteful(const MatrixXd &A, const VectorXd &b, VectorXd &x) {
+	for(int j=0; j<N; j++) {
+		x = A.lu().solve(b);
+		b = some_fx(x);
+	}
+}
+
+//O(n^3 + Nn^2)
+void optimized(const MatrixXd &A, const VectorXd &b, VectorXd &x) {
+	auto A_lu_dec = A.lu();
+	for(int j=0; j<N; j++) {
+		x = A_lu_dec.solve(b);
+		b = some_fx(x);
+	}
+}
+\end{lstlisting}
 \subsection{Machine Arithmetic and Consequences}
 \subsubsection{Loss of Orthogonality}
+When running the Gram-Schmidt orthogonalisation algorithm on a set of vectors with EIGEN, you will find that the vectors will not be fully orthogonal to each other. The reasons for this will be explained in the following sections, but in short, \textbf{computers cannot compute accurately in $\mathbb{R}$}. They can only handle finitely many numbers.\\
+It is important to note that the EIGEN \textbf{HouseholderQR} algorithm \textbf{does} result in orthogonal vectors.
+\subsubsection{}
 \subsubsection{Roundoff Errors}
+Floating-point ($\mathbb{M}$) arithmetic.\\
+Single-precision: $m = 24$ bits, $E \in \{-125, ..., 128\}$\\
+Double-precision: $m = 53$ bits, $E \in \{-1021, ..., 2024\}$\\\\
+\textbf{Absolute/Relative Error}\\
+$\tilde{x} \in \mathbb{K}$ approx. of $x \in \mathbb{K}$.\\
+$\epsilon_{abs} := |x - \tilde{x}|$ \hspace{1cm} $\epsilon_{rel} := \frac{\epsilon_{abs}}{|x|}$\\
+If $\epsilon_{rel} \leq 2^{-l}$, $\tilde{x}$ has $l$ correct digits.\\\\
+Rounding (up):\\
+$rd: \begin{cases}\mathbb{R} \to &\mathbb{M} \\ x \mapsto &\text{max argmin}_{\tilde{x}\in \mathbb{M}} |\tilde{x} - x| \end{cases}$
 \subsubsection{Cancellation}
-
+Subtraction of nearly equal numbers $\implies$ large relative errors (potential cumulation of absolute rounding errors).\\
+In Gram-Schmidt, if vectors $a$, $b$, point in nearly the same direction, the orthonormal vector $\tilde{b}$ produced from the algorithm can have a huge relative error due to cancellation.\\\\
+Example fix: $a^2 - b^2 = (a+b)(a-b)$, $a=1.3$, $b=1.2$, double-precision\\
+\begin{tabular}{cc}
+$a \tilde{\ast}a = 1.7$ (rounded) & $a\tilde{+}b = 2.5$ (exact)\\
+$b \tilde{\ast}b = 1.4$ (rounded & $a\tilde{-}b = 0.1$ (exact)\\
+$a^2 \tilde{-} b^2 = 0.30$ (exact) & $(a+b) \tilde{\ast} (a-b) = 0.25$ (exact)
+\end{tabular}\\\\
+\textbf{If inevitable, subtractions prone to cancellation should be done as early as possible!} (Before introducing roundoff errors).
+\subsubsection{}
 \section{Direct Methods for Square LSE}
+$Ax=b$ : $A \in \mathbb{K}^{nn}$, $x,b \in \mathbb{K}^n$\\
+$\mathbb{K}^{nn} \times \mathbb{K}^n \to \mathbb{K}^n$
+\subsection{} \subsection{} \subsection{} \subsection{}
 \subsection{Elimination Solvers for LSE}
+All \textbf{direct} solvers for square LSEs rely on Gaussian elimination with \underline{pivoting}.\\
+A \textbf{direct} solver always terminates after a finite, predictable number of elementary operations.\\\\
+Gaussian Elimination consists of 3 nested loops, therefore having a complexity of $O(n^3)$.\\
+The cost of solving a \textit{triangular} LSE with GE is $O(n^2)$.\\\\
+EIGEN's default of \texttt{.lu().solve()} has a complexity of $O(n^3 + ln^2)$ for $l$ vectors $b$.
 \subsection{Exploiting Structure when Solving LSE}
+Prior knowledge that:
+\begin{itemize}
+\item either certain entries of the system matrix vanish
+\item or the system matrix is generated by a given formula
+\end{itemize}
+Block elimination:\\
+$\begin{bmatrix}A_{11} & A_{12} \\ A_{21} & A_{22}\end{bmatrix} \begin{bmatrix}x_1 \\ x_2\end{bmatrix} = \begin{bmatrix}b_1 \\ b_2\end{bmatrix}$ \hspace*{1cm} \begin{tabular}{l}$A_{11}x_1 + A_{12}x_2 = b_1$ \\ $A_{21}x_1 + A_{22}x_2 = b_2$ \end{tabular}\\\\
+For the particular case (Arrow Matrix):\\
+$A = \begin{bmatrix}D & c \\ b^T & \alpha \end{bmatrix}$ where $D \in \mathbb{K}^{nn}$ is diagonal, $b, c \in \mathbb{K}^n$, $\alpha \in \mathbb{K}$\\
+$$x_2 = \frac{b_2 - b^TD^{-1}b_1}{\alpha-b^TD^{-1}c},$$
+$$x_1 = D^{-1}(b_1-x_2c)$$
+\subsubsection{Rank-1 Modifications*}
+\begin{center}\textit{(*This sub-subchapter is not marked as one in the script,\\but it is important enough to warrant its own ToC entry).}\end{center}
+Assume that at some point in a code, we are able to solve $Ax=b$ "fast" because $A$ has a favourable structure (triangular), or because we know the lu-decomposition of $A$. Assume that we now want to solve $\tilde{A}\tilde{x} = b$ for a $\tilde{A}$ which differs to $A$ in one element [one row].\\\\
+\begin{tabularx}{\linewidth}{ccr}
+$\tilde{A} = A + z(e_{i^*}e^T_{j^*})$ & $\left[ \tilde{A} = A + e_{i^*}z^T\right]$ & with $z \in \mathbb{K}$ [$z \in \mathbb{K}^n$] \\ & & and the modified element [row] at $(i^*, j^*)$ [row $i^*$]
+\end{tabularx}\\\\
+A generic rank-1 modification reads: $A \in \mathbb{K}^{nn} \mapsto \tilde{A} := A + uv^H$, $u, v, \in \mathbb{K}^n$\\\\
+\begin{tabular}{lr}
+From $\begin{bmatrix}A & u \\ v^H& -1\end{bmatrix} \begin{bmatrix}\tilde{x} \\ \tilde{\zeta}\end{bmatrix} = \begin{bmatrix}b \\ 0\end{bmatrix}$ & we construct the \textbf{Schur complement system} after eliminating $\tilde{\zeta}$:\\
+& $(A + uv^H)\tilde{x} = b \iff \tilde{A}\tilde{x} = b$
+\end{tabular}
 \subsection{Sparse Linear Systems}
+"Most" entries are 0. And this is worth exploiting.
 \subsubsection{Sparse Matrix Storage Formats}
+\textbf{COO/Triplet Format}: Stored as $(i, j, a)$ where $i, j =$ position, $a=$ val.
+\begin{lstlisting}[language=c++]
+struct TripletMatrix {
+	std::size_t m, n;
+	std::vector<size_t> I;
+	std::vector<size_t> J;
+	std::vector<scalar_t> a;
+}
+\end{lstlisting}
+\begin{lstlisting}[language=c++]
+//Solve Ax=y with COO/Triplet Format
+void multTriplMatVec(const TripletMatrix &A, const vector<scalar_t> &x, vector<scalar_t> &y) {
+	for(size_t I = 0; I<A.a.size(); I++){
+		y[A.I[I]] = A.a[I]*x[A.J[I]];
+	}
+}
+\end{lstlisting}
+\textbf{CRS/CCS}: Compressed row/column storage\\
+Stored as 3 vectors: \texttt{val-vector}, \texttt{col\_ind-array}, \texttt{row\_ptr-array} (swap col/row for ccs).\\\\
+\begin{tabularx}{\linewidth}{r X}
+\texttt{val-vector} & stores all the non-zero values. Length = num non-zero.\\
+\texttt{col\_ind-array} & stores all the column indexes of each non-zero value. Length = num non-zero.\\
+\texttt{row\_ptr-array} & stores the index (in \texttt{val-vector}) of the first non-zero value of each row. If rpa[i] = rpa[i+1], the ith row is empty. Length = no. rows ($n$).
+\end{tabularx}
 \subsubsection{Sparse Matrices in EIGEN}
-\subsubsection{Direct Solution of Sparce LSE}
-
+Refer to the relevant EIGEN-specific document.
+\subsubsection{Direct Solution of Sparse LSE}
+Refer to the relevant EIGEN-specific document.
+\subsubsection{}
+\subsubsection{}
+\subsection{}
 \section{Direct Methods for Linear Least Squares Problems}
+\subsubsection{Overdetermined LSE Examples}
 \subsection{Least Squares Solution Concepts}
 \subsubsection{Least Squares Solutions}
+$$x \in \text{argmin}_{y \in \mathbb{K}^n}||Ay-b||_2^2$$
 \subsubsection{Normal Equations}
+\begin{center}The vector $x \in \mathbb{K}^n$ is a least squares solution of the LSE $Ax=b$, $A \in \mathbb{K}^{mn}$, $b \in \mathbb{K}^n$, \underline{if and only if} it solves the \textbf{normal equations (NEQ)}:\end{center}
+$$A^TAx = A^Tb$$\\\\
+\begin{tabular}{l|l}
+NEQ for \textbf{Linear Regression}: & E.g. LR in 1D:\\ \hline
+
+$\begin{bmatrix}x_1^T & 1 \\ x_2^T & 1 \\ \vdots & \vdots \\ x_m^T & 1 \end{bmatrix} \begin{bmatrix}\alpha \\ \beta \end{bmatrix} = \begin{bmatrix} y_1 \\ y_2 \\ \vdots \\ y_m \end{bmatrix}$  \begin{tabular}{rl}
+$\leftrightarrow$ & $Ax=b$, $A \in \mathbb{K}^{m,n+1}$,\\
+& $b \in \mathbb{K}^m$, $x \in \mathbb{K}^{n+1}$
+\end{tabular}
+&
+$\begin{bmatrix}x_1 & 1 \\ x_2 & 1 \\ \vdots & \vdots \\ x_m & 1 \end{bmatrix} \begin{bmatrix}\alpha \\ \beta \end{bmatrix} = \begin{bmatrix} y_1 \\ y_2 \\ \vdots \\ y_m \end{bmatrix}$ \begin{tabular}{rl}
+$\leftrightarrow$ & $Ax=b$, $A \in \mathbb{K}^{m,2}$,\\
+& $b \in \mathbb{K}^m$, $x \in \mathbb{K}^{2}$
+\end{tabular}
+\end{tabular}\\
+
+
+%NEQ for \textbf{Linear Regression}:\\
+%$\begin{bmatrix}x_1^T & 1 \\ x_2^T & 1 \\ \vdots & \vdots \\ x_m^T & 1 \end{bmatrix} \begin{bmatrix}\alpha \\ \beta \end{bmatrix} = \begin{bmatrix} y_1 \\ y_2 \\ \vdots \\ y_m \end{bmatrix} \leftrightarrow Ax=b$, $A \in \mathbb{K}^{m,n+1}$, $b \in \mathbb{K}^m$, $x \in \mathbb{K}^{n+1}$\\\\
+%E.g. LR in 1D:\\
+%$\begin{bmatrix}x_1 & 1 \\ x_2 & 1 \\ \vdots & \vdots \\ x_m & 1 \end{bmatrix} \begin{bmatrix}\alpha \\ \beta \end{bmatrix} = \begin{bmatrix} y_1 \\ y_2 \\ \vdots \\ y_m \end{bmatrix} \leftrightarrow Ax=b$, $A \in \mathbb{K}^{m,2}$, $b \in \mathbb{K}^m$, $x \in \mathbb{K}^{2}$\\
+\begin{center}If $m \geq n$ and $N(A) = \{0\}$, the LSE $Ax=b$ has a unique least squares solution $x = (A^TA)^{-1}A^Tb$ that can be obtained by solving the NEQ.\end{center}
 \subsubsection{Moore-Penrose Pseudoinverse}
+\subsubsection{}
 \subsection{Normal Equation Methods}
+
 \end{document}
     
     

@@ -151,6 +151,21 @@ Eigen::MatrixXd I = Eigen::MatrixXd::Identity(n,n);
 Eigen::MatrixXd O = Eigen::MatrixXd::Zero(n,m);
 Eigen::MatrixXd D = d_vector.asDiagonal();
 \end{lstlisting}
+\subsection{Sparse Matrices}
+\begin{lstlisting}[language=c++]
+#include <Eigen/Sparse>
+//CSS Format
+Eigen::SparseMatrix<int, Eigen::ColMajor> Asp(rows, cols);
+//CRS Format
+Eigen::SparseMatrix<int, Eigen::RowMajor> Asp(rows, cols);
+
+unsigned int row_ind = 2;
+unsigned int col_ind = 4;
+double value = 2.5;
+Eigen::Triplet<double> triplet(row_ind, col_ind, value);
+Eigen::SparseMatrix<double, Eigen::RowMajor> spMat(rows, cols);
+spMat.setFromTriplets(triplets.begin(), triplets.end());
+\end{lstlisting}
 \section{Reading Matrix Values}
 \begin{lstlisting}[language=c++]
 using namespace Eigen;
@@ -162,6 +177,19 @@ R(i,j) = 2;
 R.block(i,j,h,w); //Block size hxw starting at (i,j)
 \end{lstlisting}
 Other methods include: \texttt{topLeftCorner(p,q), bottomLeftCorner(p,q), topRightCorner(p,q), bottomRightCorner(p,q), topRows(q), bottomRows(q), leftCols(p), rightCols(p)}.
+\section{Building Matrices}
+\begin{lstlisting}[language=c++]
+MatrixXd arrowmat(const VectorXd &d, const VectorXd &c, const VectorXd &b, const double alpha) {
+	int n = d.size();
+	MatrixXd A(n+1, n+1);	//Empty dense matrix
+	A.setZero();			//Init with all zeroes
+	A.diagonal.head(n) = d;	//Initialize diagonal from vector d
+	A.col(n).head(n) = c;	//Rightmost column = c
+	A.row(n).head(n) = b;	//Bottom row = b (b is a row vector)
+	A(n, n) = alpha;
+	return A;
+}
+\end{lstlisting}
 \section{Basic Operations}
 \subsection{Arithmetic}
 \begin{lstlisting}[language=c++]
@@ -173,5 +201,77 @@ A*x; x.adjoint()*A*x;
 x.dot(y); //Dot product. x, y are column vectors.
 x.adjoint()*y; //Dot product by explicitly transposing x.
 x * y.adjoint(); //Tensor product.
+\end{lstlisting}
+\section{LSE Solvers}
+\subsection{Gaussian Elimination}
+The default solver in EIGEN for \textbf{matrix decompositions} and \textbf{solving LSE}s is Gaussian elimination with partial pivoting. This is accessible through the methods \texttt{lu()} and \texttt{solve()} on dense matrices.
+\begin{lstlisting}[language=c++]
+X = A.lu().solve(B)
+\end{lstlisting}
+Wherein $A \in \mathbb{K}^{nn}$, $B \in \mathbb{K}^{nj}$, and $B$ represents $j$ RHS vectors.\\
+$X = A^{-1}B = \left[ A^{-1}(B)_{:,1}, ..., A^{-1}(B)_{:,l}\right]$
+\subsubsection{Using Special Structures}
+\begin{lstlisting}[language=c++]
+//A is lower triangular
+x = A.triangularView<Eigen::Lower>().solve(b);
+//A is upper triangular
+x = A.triangularView<Eigen::Upper>().solve(b);
+//A is hermetian/self-adjoined and positive definite
+x = A.selfadjointView<Eigen::Upper>().llt().solve(b);
+//A is hermetian/self-adjoined, positive or negative semi-definite
+x = A.selfadjointView<Eigen::Upper>().ldlt().solve(b);
+\end{lstlisting}
+
+\begin{lstlisting}[language=c++]
+x = A.lu().solve(b); //lu short for partial piv lu
+x = A.fullPivLu().solve(b);
+Eigen::HouseholderQR<MatrixXd> solver(A); x = solver.solve(b);
+x = A.jacobiSvd(Eigen::ComputeThinU|Eigen::ComputeThinV).solve(b);
+\end{lstlisting}
+\subsubsection{Sparse Matrices}
+\begin{lstlisting}[language=c++]
+Eigen::SolverType<Eigen::SparseMatrix<double>> solver(A);
+Eigen::VectorXd x = solver.solve(b);
+\end{lstlisting}
+The standard solver is \texttt{SparseLU}.
+\begin{lstlisting}[language=c++]
+//SparseLU for an arrow matrix
+VectorXd arrowsys_sparse(const VectorXd &d, const VectorXd &c, const VectorXd &b, const double alpha, const VectorXd &y) {
+	int n = d.size();
+	SparseMatrix<double> A(n+1, n+1); //default: ccs
+	VectorXi reserveVec = VectorXi::Constant(n+1, 2); //nnz per col
+	reserveVec(n) = n+1; //last full col
+	A.reserve(reserveVec);
+	for(int j=0; j<n; j++) { //initialize along cols for efficiency
+		A.insert(j, j) = d(j); //diagonal entry
+		A.insert(n, j) = b(j);
+	}
+	for(int i=0; i<n; i++) {
+		A.insert(i, n) = c(i); //last col
+	}
+	A.insert(n,n) = alpha; //bottom right entry
+	
+	A.makeCompressed();
+	return solver_t(A).solve(y);
+}
+\end{lstlisting}
+Implementations of Sparse Solvers:
+\begin{itemize}
+\item SuperLU
+\item UMFPACK
+\item \textbf{PARDISO}
+\end{itemize}
+\begin{lstlisting}[language=c++]
+#include <Eigen/PardisoSupport>
+void solveSparsePardiso(size_t n) {
+	using SpMat = Eigen::SparseMatrix<double>;
+	
+	const SpMat M = initSparseMatrix <SpMat>(n);
+	const Eigen::VectorXd b = Eigen::VectorXd::Random(n);
+	Eigen::VectorXd x(n);
+	
+	Eigen::PardisoLU<SpMat> solver(M);
+	x = solver.solve(b);
+}
 \end{lstlisting}
 \end{document}
