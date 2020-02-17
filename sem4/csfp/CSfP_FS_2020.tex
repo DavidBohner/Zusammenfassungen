@@ -1,0 +1,209 @@
+\documentclass{sciposter}
+\usepackage[dvipsnames,usenames,svgnames,table,x11names, rgb, html]{xcolor} 
+\usepackage{lipsum}
+\usepackage{epsfig}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage[german]{babel}
+\usepackage{geometry}
+\usepackage{multicol}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usepackage{wrapfig}
+\usepackage{gensymb}
+\usepackage[utf8]{inputenc}
+\usepackage{empheq}
+\usepackage{mathpazo}
+\usepackage[T1]{fontenc}
+\renewcommand{\familydefault}{\rmdefault}
+\usepackage{eulervm}
+
+% for nice tableas
+\usepackage{booktabs}
+
+% so we have more space between matrix entries
+\setlength{\arraycolsep}{12pt}
+
+\geometry{
+ landscape,
+ a1paper,
+ left=5mm,
+ right=50mm,
+ top=5mm,
+ bottom=50mm,
+ }
+
+
+\usepackage{todonotes}
+
+\newcommand{\nnz}{d\operatorname{nnz}}
+\newcommand{\TODO}[1]{\todo[inline, color=red!40]{#1}}
+\renewcommand{\vec}[1]{\mathbf{#1}}
+%BEGIN LISTINGDEF
+
+
+
+\usepackage{listings}
+\usepackage{inconsolata}
+
+
+\usepackage{mdframed}
+
+\newenvironment{method}[1]{\begin{mdframed}[backgroundcolor=blue!10,innertopmargin=15pt, innerbottommargin=15pt, nobreak=true]
+		\textbf{#1 }
+	}
+	{ 
+	\end{mdframed}
+}
+
+\newenvironment{important}{\begin{mdframed}[backgroundcolor=red!50,innertopmargin=15pt, innerbottommargin=15pt, nobreak=true]
+		\Large
+	}
+	{ 
+	\end{mdframed}
+}
+
+\newenvironment{trick}[1]{\begin{mdframed}[backgroundcolor=PineGreen!50,innertopmargin=15pt, innerbottommargin=15pt, nobreak=true]
+			\textbf{#1 }
+	}
+	{ 
+	\end{mdframed}
+}
+
+
+\definecolor{background}{HTML}{FAFAFA}
+\definecolor{comment}{HTML}{ABB0B6}
+\definecolor{keywords}{HTML}{55B4D4}
+\definecolor{basicStyle}{HTML}{6C7680}
+\definecolor{variable}{HTML}{001080}
+\definecolor{string}{HTML}{86B300}
+
+\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+
+
+\lstset{
+	% How/what to match
+	sensitive=true,
+	% Border (above and below)
+	frame=single,
+	% Extra margin on line (align with paragraph)
+	xleftmargin=\parindent,
+	% Put extra space under caption
+	belowcaptionskip=1\baselineskip,
+	% Colors
+	backgroundcolor=\color{background},
+	basicstyle=\color{basicStyle}\ttfamily,
+	keywordstyle=\color{keywords},
+	commentstyle=\color{comment},
+	stringstyle=\color{string},
+	numberstyle=\color{sviolet},
+	identifierstyle=\color{variable},
+	% Break long lines into multiple lines?
+	breaklines=true,
+	% Show a character for spaces?
+	showstringspaces=false,
+	tabsize=2
+}
+
+%END LISTINGDEF
+
+
+\newcommand*\widefbox[1]{\fbox{\hspace{2em}#1\hspace{2em}}}
+
+
+\newlength\dlf  % Define a new measure, dlf
+\newcommand\alignedbox[2]{
+% Argument #1 = before & if there were no box (lhs)
+% Argument #2 = after & if there were no box (rhs)
+&  % Alignment sign of the line
+{
+\settowidth\dlf{$\displaystyle #1$}
+    % The width of \dlf is the width of the lhs, with a displaystyle font
+\addtolength\dlf{\fboxsep+\fboxrule}
+    % Add to it the distance to the box, and the width of the line of the box
+\hspace{-\dlf}
+    % Move everything dlf units to the left, so that & #1 #2 is aligned under #1 & #2
+\boxed{#1 #2}
+    % Put a box around lhs and rhs
+}
+}
+\usepackage{graphicx,url}
+
+%BEGIN TITLE
+\title{\huge{Case Studies from Practice}}
+
+% if you want to set an author replace the next line with \author{your name here}
+\author{David Bohner}
+
+
+
+\begin{document}
+\fontfamily{lmss}\selectfont
+\maketitle
+
+\begin{multicols}{3}
+
+\section{General Pointers}
+\subsection{General Form}
+
+\begin{mdframed}
+\begin{itemize}
+	\item \underline{Always} compare your suggestion to the \textit{'Do Nothing'} option.
+	\begin{itemize}
+		\item e.g. increased maintenance costs for outdated software when considering spending to re-develop it in-house.
+	\end{itemize}
+	\item Present several alternatives.
+	\item Explain and Defend: Is it an actual problem worth fixing, an opportunity worth pursuing?
+	\begin{itemize}
+		\item Opportunity, Risk, Cost?
+	\end{itemize}
+\end{itemize}
+\end{mdframed}
+
+\begin{important}{}
+Reference the \texttt{Problem Statement Template!}
+\end{important}
+
+\subsection{Interest of Managers}
+
+\begin{mdframed}
+\begin{itemize}
+	\item \textbf{(Senior) Management} focuses on:
+	\begin{itemize}
+		\item Higher Revenue
+		\item Lower Costs
+		\item Fewer Risks
+	\end{itemize}
+\end{itemize}
+\end{mdframed}
+
+\section{Applied Analytic Methods}
+\subsection{Software Changes / Upgrades}
+\subsubsection{Open-Source Software}
+
+\begin{mdframed}
+\begin{itemize}
+\item Are there available open-source variants of the software you need?
+	\begin{itemize}
+		\item Is it viable to use?
+		\begin{itemize}
+			\item Available Features
+			\item Stability
+			\item 3rd-Party Support (unlikely)
+			\item Speed of feature updates, security patches?
+			\item Continued update/support (longevity)?
+			\item Who funds the organization?
+			\item What are the interests of the organization?
+		\end{itemize}
+	\end{itemize}
+	
+\item Should we use OSS?
+\item Should we open-source our own software?
+\item What is the impact if \textit{a competitor} open-source their software?
+\item Should we sponsor/donate to OSS projects? What benefit do we receive from this?
+\end{itemize}
+\end{mdframed}
+
+
+\end{multicols}
+\end{document}
